@@ -8,6 +8,11 @@ AUTH_DATABASE= {
 			"password":""
 }
 
+LOGGER_DATABASE= {
+			"username":"logger",
+			"password":"logger"
+}
+
 CONNECTORS= {
 		"connector_funf": {
 			"db_pass": ""
