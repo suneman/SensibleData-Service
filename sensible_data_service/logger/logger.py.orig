@@ -1,6 +1,7 @@
+<<<<<<< HEAD
 from pymongo import MongoClient
-#import service_config
-#import SECURE_service_config
+import service_config
+import SECURE_service_config
 from utils.log_database import LogDatabase
 
 class Logger(object):
@@ -9,6 +10,8 @@ class Logger(object):
 
 	def __init__(self):
 			self.logDatabase = LogDatabase()
+=======
+# test
 
-def tra(request):
-	return HttpResponse("CIAO")
+# Ri-test
+>>>>>>> 80ff231b5a9fb2a25750698c4f7fbebc75eacb7d

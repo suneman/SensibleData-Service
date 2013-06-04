@@ -10,4 +10,8 @@ urlpatterns = patterns('',
 	url(r'^application_manager/', include('application_manager.urls')),
 	 
 	url(r'^test/', include('testing.urls')),
+
+        url(r'^logger/', include('logger.urls')),
+
+
 )

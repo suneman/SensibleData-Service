@@ -6,6 +6,7 @@ from authorization_manager.authorization_manager import *
 import bson.json_util as json
 from connector_pipes.connector_pipe_funf import connector_pipe_funf
 from application_manager.application_manager import ApplicationManager
+from logger import Logger
 
 def testing(request):
 	authorizationManager = AuthorizationManager()
@@ -25,6 +26,10 @@ def testing(request):
 	response = applicationManager.registerApplication(name='krowa', owner='john', connector='connector_funf', scopes='all_probes', description="this is an awesome app", params={})
 
 	#response = pipe.getAuthorization('aaaa')
+
+
+
+	logger = Logger()
 
 	return HttpResponse(json.dumps(response))
 
