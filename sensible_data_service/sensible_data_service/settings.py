@@ -148,16 +148,13 @@ INSTALLED_APPS = (
     'testing',
     'connectors.connector_funf',
     'anonymizer',
-<<<<<<< HEAD
     'django.contrib.admin',
-    'django_openid_auth'
-=======
+#    'django_openid_auth'
     'logger',
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
->>>>>>> a405c633d19c8084766a0a05cc973aec83f2e101
 )
 
 # A sample logging configuration. The only tangible logging
