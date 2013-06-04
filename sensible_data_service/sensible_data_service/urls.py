@@ -13,8 +13,5 @@ urlpatterns = patterns('',
 	url(r'^admin/', include(admin.site.urls)),
 	 
 	url(r'^test/', include('testing.urls')),
-
-        url(r'^logger/', include('logger.urls')),
-
-
+	url(r'^logger/', include('logger_manager.urls')),
 )

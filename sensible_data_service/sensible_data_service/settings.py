@@ -150,7 +150,7 @@ INSTALLED_APPS = (
     'anonymizer',
     'django.contrib.admin',
 #    'django_openid_auth'
-    'logger',
+    'logger_manager',
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
