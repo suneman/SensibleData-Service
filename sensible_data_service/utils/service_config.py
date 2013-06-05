@@ -17,13 +17,6 @@ AUTH_DATABASE = {
 			}
 }
 
-LOGGER_DATABASE = {
-			"backend":"mongodb",
-			"params": {
-					"url":"mongodb://%s:%s@ds029338.mongolab.com:29338/sensible-logger",
-					"database":"sensible-logger"
-			}
-}
 
 LOG_FILE_PATH = DATA_BASE_PATH+"/sensible-data/log/" #must be www-data writable
 SERVICE_NAME = "SensibleDTU-1k"
