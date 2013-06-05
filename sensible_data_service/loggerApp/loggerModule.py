@@ -45,7 +45,7 @@ class Logger(object):
 	def cryptoSetup(self): # make an overloaded method used also by the normal creation, for the "D payload"
 		h = HMAC.new(key=self.A0, msg=self.SEED,digestmod=SHA512) # Load the HMAC with the secret key A0, want to hash SEED, hash algo = SHA512
 		self.Z0 = h.hexdigest().encode("utf-8") # The result is stored in Z = HMAC of SEED with the key A0 ==> Z=HMAC_A0_(SEED)
-		C = Helper.computeChecksum([self.D0])
+		C = helperModule.computeChecksum([self.D0])
 		D = {"payload" : self.D0['payload'], "userID" : self.userID, "userAppFlow" : str(self.initialUserAppflowID), "appID" : self.D0['appID']} # Creates D for the first dummy entry
 		self.writeEntry(0, D, C, self.SEED) # Write the first [dummy] entry in the log + the authentication key [before being overridden]
 
@@ -67,9 +67,9 @@ class Logger(object):
 	def append(self, data):
 		flowID = self.getMaxFlowID() + 1		
 		D = self.createDforlog(data)
-		current_C = Helper.createC(D)
+		current_C = helperModule.createC(D)
 		previous_Y = self.getEntry(flowID - 1).get("Y")
-		current_Y = Helper.computeY(previous_Y, current_C)
+		current_Y = helperModule.computeY(previous_Y, current_C)
 		self.writeEntry(flowID, D, current_C, current_Y)	# Finally, writes the log entry
 
 	def writeEntry(self, flowID, D, C, Y):
