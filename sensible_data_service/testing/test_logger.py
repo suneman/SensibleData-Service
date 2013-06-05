@@ -1,10 +1,17 @@
-from logger_manager import logger_manager
+from loggerApp import loggerModule
+from loggerApp import checkerModule
 from django.http import HttpResponse
 
-def testIt(request):
+def insert(request):
 
 	fakeJson = {"appID": "fb", "payload": "dummyPayload", "userAppID": 1, "userID": "riccardo"}
 
-	logger = logger_manager.Logger()
+	logger = loggerModule.Logger()
 	logger.append(fakeJson)
-	return HttpResponse("CIAO")
+	return HttpResponse("insert")
+
+
+def check(request):
+	checker = checkerModule.Checker()
+	checker.check()
+	return HttpResponse("check")
