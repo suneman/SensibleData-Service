@@ -1,10 +1,11 @@
 from django.conf.urls import patterns, include, url
+from testing import views
+from testing import test_logger
 
-# Uncomment the next two lines to enable the admin:
-# from django.contrib import admin
-# admin.autodiscover()
+#urlpatterns = patterns('',
+#	url(r'^$', views.testIt),
 
 urlpatterns = patterns('',
-	 url(r'^test/', 'testing.test.testing'),
-	 
+        url(r'^$', test_logger.testIt),
+
 )
