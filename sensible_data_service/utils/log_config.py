@@ -19,14 +19,15 @@ LOGGER_DATABASE = {
 PATH_TO_SECRET = "secret.txt"
 
 D0 = {
-	"appID": " ",
-	"payload": " ",
-	"userID": " ",
-	"userAppFlow" : " "
+	"appID": "fb ",
+	"payload": "dummyPayload",
+	"userID": "riccardo "
 }
 
 SEED = "THISISTHEPUBLICSEED"
 A0 = "ABCDEFGHABCDEFGHABCDEFGHABCDEFGH"
+
+FIRST_ENTRY = 0
 
 DIGEST_MODE = "SHA512Hash"
 DIGEST_SIZE = "64"

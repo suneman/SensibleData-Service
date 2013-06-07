@@ -27,18 +27,20 @@ class LogDatabase(object):
 		return coll.find(query)
 
         def writeEntry(self, flowID, D, C, Y):
-                self.collection.insert({"flowID" : flowID, "D": D, "C" : C , "Y" : Y})
+                returned = self.collection.insert({"flowID" : flowID, "D": D, "C" : C , "Y" : Y})
+		print "returned = " + str(returned)
 
         def writeEntryWithMAC(self, flowID, D, C, Y, Z, A):
                 self.collection.insert({"flowID" : flowID, "D": D, "C" : C , "Y" : Y, "Z" : Z, "A" : A})
 
 
         def getMaxFlowID(self):
-                if (self.collection.count() < 1):
-                        return 1
-                else:
-                        resultEntry = self.collection.find_one(sort=[("flowID", -1)])
-                        return resultEntry['flowID']
+		maxFlowID = 0
+		resultEntry = self.collection.find_one(sort=[("flowID", -1)])
+		if (resultEntry is not None):
+			maxFlowID = resultEntry['flowID']
+		print "maxFLowID = " + str(maxFlowID)
+		return maxFlowID
 
 
 # TODO:
@@ -52,6 +54,7 @@ class LogDatabase(object):
                 return result
 
         def getEntry(self, flowID):
+		print "flowID = " + str(flowID)
                 result = self.collection.find_one({"flowID" : flowID})
                 return result
 
@@ -94,10 +97,11 @@ class LogDatabase(object):
         def getPublicSeed(self):
                 return CONFIG.SEED
 
+# TODO: if there are NO entries, it crashes.
         def getLastY(self):
-                maxFlowID = self.getMaxFlowID()
+		maxFlowID = self.getMaxFlowID()
                 lastEntry = self.getEntry(maxFlowID)
                 toReturn = lastEntry.get("Y")
-                print toReturn
+		return toReturn
 
 	

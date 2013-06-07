@@ -40,6 +40,7 @@ def computeY(previous_Y, current_C):
 	Y = h.hexdigest()
 	return Y	
 
+
 # Computes the checsum of the values, so key order does not matter
 def createC(D):
 	outputList = []
@@ -48,3 +49,11 @@ def createC(D):
 	resultList.sort()
 	temp_C = computeChecksum(resultList)
 	return temp_C
+
+
+def createD(data):
+	userID = data['userID']
+	appID = data['appID']
+	payload = data['payload']
+	return {"userID" : userID, "appID" : appID, "payload" : payload}
+

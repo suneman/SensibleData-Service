@@ -2,16 +2,18 @@ from loggerApp import loggerModule
 from loggerApp import checkerModule
 from django.http import HttpResponse
 
+
 def insert(request):
-
-	fakeJson = {"appID": "fb", "payload": "dummyPayload", "userAppID": 1, "userID": "riccardo"}
-
 	logger = loggerModule.Logger()
-	logger.append(fakeJson)
-	return HttpResponse("insert")
+	if (logger.getMaxFlowID() == 0):
+		logger.cryptoSetup()
+ 
+	fakeJson = {"appID": "FUNF", "payload": "FUNF_dummyPayload", "userID": "FUNF_riccardo"}
+	entryID = logger.append(fakeJson)
+	return HttpResponse("inserted entry = " + str(entryID))
 
 
 def check(request):
 	checker = checkerModule.Checker()
-	checker.check()
-	return HttpResponse("check")
+	audit = checker.check()
+	return HttpResponse("last check = " + str(audit))

@@ -1,8 +1,4 @@
-import json
-from Crypto.Hash import HMAC
-from Crypto.Hash import SHA512
 import helperModule
-from utils import log_config as CONFIG
 from utils import log_database
 
 class Checker(object):
@@ -11,7 +7,6 @@ class Checker(object):
 
 	def __init__(self):
 		self.log = log_database.LogDatabase()
-#		self.log.__init__()
 
 
 	def dataIntegrityCheck(self,current_D, current_C):
@@ -35,16 +30,16 @@ class Checker(object):
 		verifiedFlowID = 0
 		audit = {}
 		while ( (Y_1 != Y_last) and (keepLooking==True) ):
-			print
+#			print
 			dataForCheck = self.log.getDataForCheck(flowID)
 			integrityDict = self.dataIntegrityCheck(dataForCheck["current_D"], dataForCheck["current_C"])
 			
-			print "flowID=" + str(flowID) + ", dataIntegrityCheckPassed? "+ str(integrityDict["status"])
+#			print "flowID=" + str(flowID) + ", dataIntegrityCheckPassed? "+ str(integrityDict["status"])
 			if ( not integrityDict["status"] ):
 				keepLooking = False
 	
 			chainDict = self.chainIntegrityCheck(Y_1, integrityDict["temp_C"], dataForCheck["current_Y"])
-			print "flowID=" + str(flowID) + ", chainIntegrityCheck? "+ str(chainDict["status"])
+#			print "flowID=" + str(flowID) + ", chainIntegrityCheck? "+ str(chainDict["status"])
 			if ( not chainDict["status"] ):
 				keepLooking = False
 			
@@ -53,11 +48,13 @@ class Checker(object):
 			Y_1 = chainDict["temp_Y"]
 			flowID = flowID + 1
 
-		print "Max flowID verified = " + str(flowID - 2)
-		print audit
+#		print "Max flowID verified = " + str(flowID - 1)
+#		print audit
+		return audit
 
+# TODO: REFACTOR flowID = 1 to terminate
 	def check(self):
 		Y_seed = self.log.getPublicSeed()
 		Y_last = self.log.getLastY()
 		flowID = 1
-		self.startCheck(Y_seed, Y_last, flowID) #where I start, where I need to end up
+		return self.startCheck(Y_seed, Y_last, flowID) #where I start, where I need to end up
