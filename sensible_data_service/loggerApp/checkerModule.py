@@ -1,17 +1,17 @@
-from loggerApp import interfaceModule
 import json
 from Crypto.Hash import HMAC
 from Crypto.Hash import SHA512
 import helperModule
 from utils import log_config as CONFIG
+from utils import log_database
 
 class Checker(object):
 
 	log = None
 
 	def __init__(self):
-		self.log = interfaceModule.LoggerInterface()
-		self.log.__init__()
+		self.log = log_database.LogDatabase()
+#		self.log.__init__()
 
 
 	def dataIntegrityCheck(self,current_D, current_C):
@@ -61,8 +61,3 @@ class Checker(object):
 		Y_last = self.log.getLastY()
 		flowID = 1
 		self.startCheck(Y_seed, Y_last, flowID) #where I start, where I need to end up
-
-
-if __name__ == '__main__': 
-	main() 
-	
