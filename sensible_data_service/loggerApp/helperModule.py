@@ -30,7 +30,7 @@ def computeChecksum(inputData):
 	return checksum
 
 
-def computeY(previous_Y, current_C):
+def create_Y(previous_Y, current_C):
 	if (previous_Y is None or current_C is None):
 		print "Error: previous_Y or current_C = None. Exit"
 		exit(-1)
@@ -41,8 +41,8 @@ def computeY(previous_Y, current_C):
 	return Y	
 
 
-# Computes the checsum of the values, so key order does not matter
-def createC(D):
+# Computes the checsum of values only, so key order does not matter
+def create_C(D):
 	outputList = []
 	extract(D,outputList)
 	resultList = convert(outputList)
@@ -51,7 +51,7 @@ def createC(D):
 	return temp_C
 
 
-def createD(data):
+def create_D(data):
 	userID = data['userID']
 	appID = data['appID']
 	payload = data['payload']
