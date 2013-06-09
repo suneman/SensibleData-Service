@@ -3,6 +3,21 @@ DROP_DATABASE = "drop_method"
 DELETE_ENTRY = "delete_method"
 DATAFLOW = "append_dataflow"
 
+DATAFLOW = {
+        "id" : "append_dataflow",
+        "fields" : ["field_1", "field_2"], 
+        }
+
+
+DATAFLOW_ID = DATAFLOW["id"] 
+
+
+
+
+
+
+
+
 # Roles:
 ADMIN = {
 	"id" : "admin",
@@ -15,7 +30,7 @@ ADMIN = {
 USER = {
 	"id" : "user",
 	"methods" : 	[
-			DATAFLOW,
+			DATAFLOW["id"],
 			DELETE_ENTRY
 			]
 }

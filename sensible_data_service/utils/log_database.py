@@ -28,7 +28,7 @@ class LogDatabase(object):
 
         def writeEntry(self, flowID, D, C, Y):
                 returned = self.collection.insert({"flowID" : flowID, "D": D, "C" : C , "Y" : Y})
-		print "returned = " + str(returned)
+                return str(returned)
 
         def writeEntryWithMAC(self, flowID, D, C, Y, Z, A):
                 self.collection.insert({"flowID" : flowID, "D": D, "C" : C , "Y" : Y, "Z" : Z, "A" : A})
@@ -39,7 +39,7 @@ class LogDatabase(object):
 		resultEntry = self.collection.find_one(sort=[("flowID", -1)])
 		if (resultEntry is not None):
 			maxFlowID = resultEntry['flowID']
-		print "maxFLowID = " + str(maxFlowID)
+#		print "maxFLowID = " + str(maxFlowID)
 		return maxFlowID
 
 
@@ -54,7 +54,7 @@ class LogDatabase(object):
                 return result
 
         def getEntry(self, flowID):
-		print "flowID = " + str(flowID)
+#		print "flowID = " + str(flowID)
                 result = self.collection.find_one({"flowID" : flowID})
                 return result
 

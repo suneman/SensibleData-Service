@@ -25,6 +25,7 @@ class Logger(object):
 		C = helperModule.computeChecksum([CONFIG.D0])
 		self.logDatabase.writeEntry(CONFIG.FIRST_ENTRY, CONFIG.D0, C, CONFIG.SEED) # Write the first [dummy] entry in the log + the authentication key [before being overridden]
 
+
 # log_entry = <flowID, D, C, Y>
 # D = <userID,appID,payload>
 	def append_dataflow(self, data):
@@ -33,17 +34,9 @@ class Logger(object):
 		current_C = helperModule.create_C(current_D)
 		previous_Y = self.logDatabase.getEntry(current_flowID - 1).get("Y")
 		current_Y = helperModule.create_Y(previous_Y, current_C)
-		self.logDatabase.writeEntry(current_flowID, current_D, current_C, current_Y)	# Finally, writes the log entry
-		return current_flowID
-
-
-
-
-
-
-
-
-
+		mongo_id_string = self.logDatabase.writeEntry(current_flowID, current_D, current_C, current_Y)	# Finally, writes the log entry
+                tuple_to_return = (current_flowID, mongo_id_string)
+                return tuple_to_return
 
 
 	def dispatching(self,role,method):
@@ -89,19 +82,14 @@ class Logger(object):
 
 	def append(self, role, method, data):
 		print
+                returned = None
 		st = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S') # Format : "2013-06-08 12:01:15"
 		if (self.dispatching(role, method)): # If the check went fine
 			print st + " ==> role = <" + role + "> has permission for method = <" + method + ">" # "2013-06-08 12:07:11 ==> user"
-			returned = getattr(self, method)(data)
+			returned = getattr(self, method)(data) # the corresponding method gets called with data as input
 			if not method:
 			    raise Exception("Method %s not implemented" % method_name)
 		else:
 			print st + " ==> role = <" + role + "> has NO permission for method = <" + method + ">" 
-		return returned
+                return returned
 
-
-	def dataflow_method():
-		print "this is the dataflow_method"
-
-	def drop_method():
-		print "this is the drop_method"
