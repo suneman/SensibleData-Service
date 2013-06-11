@@ -19,21 +19,28 @@ class Logger(object):
 # In this case, Y is NOT the hash of the current D0 with the previous link, but a random seed.
 # D0 is useless, added to make a consistent entry in the log, not used for authentication.
 	def cryptoSetup(self): # make an overloaded method used also by the normal creation, for the "D payload"
-            self.logDatabase.writeEntryWith_Z(CONFIG.FIRST_ENTRY, CONFIG.D0, CONFIG.V0, CONFIG.Z0, CONFIG.A0)
+            self.logDatabase.writeEntryWith_Z(CONFIG.FIRST_ENTRY, CONFIG.D0, CONFIG.V0, CONFIG.Z0)
+            # TODO: do I need to update A here?
 
 # log_entry = <flowID, D, C, Y>
 # D = <userID,appID,payload>
 	def append_dataflow(self, data):
+                print "LOGGER APPEND"
 		current_flowID = self.logDatabase.getMaxFlowID() + 1		
 		current_D = helperModule.create_D(data)
 		current_V = helperModule.create_V(current_D)
 
-                previous_A = self.logDatabase.getEntry(current_flowID - 1).get("A")
-                previous_Z = self.logDatabase.getEntry(current_flowID - 1).get("Z")
-                current_Z = helperModule.create_Z(current_V, previous_Z, previous_A)
-                future_A = helperModule.update_A(previous_A) # previous_A is used to compute current Z
+                previous_A = helperModule.read_A()
 
-                mongo_id_string = self.logDatabase.writeEntryWith_Z(current_flowID, current_D, current_V, current_Z, future_A) # Finally, writes the log entry
+                previous_Z = self.logDatabase.getPrevious(current_flowID).get("Z")
+                current_Z = helperModule.create_Z(current_V, previous_Z, previous_A)
+
+                print "for flowID = " + str(current_flowID)
+                print "resulting current_Z is = " + current_Z
+
+                helperModule.update_A() # previous_A is deleted
+
+                mongo_id_string = self.logDatabase.writeEntryWith_Z(current_flowID, current_D, current_V, current_Z) # Finally, writes the log entry
                 tuple_to_return = (current_flowID, mongo_id_string)
                 return tuple_to_return
 

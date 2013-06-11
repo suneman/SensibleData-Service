@@ -1,5 +1,7 @@
 from Crypto.Hash import SHA512
 from Crypto.Hash import HMAC
+import os
+from utils import log_config as CONFIG
 
 def convert(input):
 	if isinstance(input, dict):
@@ -23,24 +25,12 @@ def extract(myDict, myList):
 
 
 # Computes the checsum of values only, so key order does not matter
-def computeChecksum(inputData):
-	h = SHA512.new()		
-	for item in inputData:
-		h.update(str(item))
-	checksum = h.hexdigest()
-	return checksum
-
-
-#def create_Y(previous_Y, current_V):
-#	if (previous_Y is None or current_V is None):
-#		print "Error: previous_Y or current_V = None. Exit"
-#		exit(-1)
-#	h = SHA512.new()
-#	h.update(previous_Y)
-#	h.update(current_V)
-#	Y = h.hexdigest()
-#	return Y	
-
+#def computeChecksum(inputData):
+#	h = SHA512.new()		
+#	for item in inputData:
+#		h.update(str(item))
+#	checksum = h.hexdigest()
+#	return checksum
 
 def create_V(D):
 	outputList = []
@@ -56,11 +46,37 @@ def create_D(data):
 	payload = data['payload']
 	return {"userID" : userID, "appID" : appID, "payload" : payload}
 
-def update_A(old_A):
-    return computeChecksum(old_A)
-
-def create_Z(current_V, previous_Z, current_A):
-    hmac = HMAC.new(str(current_A))
+def create_Z(current_V, previous_Z, previous_A):
+    hmac = HMAC.new(previous_A)
     hmac.update(current_V)
     hmac.update(previous_Z)
     return hmac.hexdigest()
+
+def read_A():
+    fr = open(CONFIG.FILE_A, 'r')
+    A = fr.read()
+    fr.close()
+    return A
+
+def update_A():
+    A = read_A()
+    print "before = " + A
+#    calculated_A = calculateHash_A(1,A) # 1 round only
+    calculated_A = A
+
+    fw = open(CONFIG.FILE_A_TEMP, 'w')
+
+    fw.write(calculated_A)
+    fw.close()
+    os.rename(CONFIG.FILE_A_TEMP, CONFIG.FILE_A)
+    print "after = " + calculated_A
+    return calculated_A
+
+def calculateHash_A(rounds, A):
+    print "rounds = " + str(rounds)
+    print "A = " + A
+    h = SHA512.new() # here or inside the loop?
+    h.update(A)
+    new_A = h.hexdigest()
+    print "updated_A = " + new_A
+    return new_A

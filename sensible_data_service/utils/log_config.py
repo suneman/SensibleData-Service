@@ -1,3 +1,4 @@
+BASE_PATH = "/home/riccardo/MODIS/SensibleData-Service/sensible_data_service"
 
 LOGGER_DATABASE = {
 	"backend":"mongodb",
@@ -11,13 +12,6 @@ LOGGER_DATABASE = {
 }
 
 
-
-
-
-
-
-PATH_TO_SECRET = "secret.txt"
-
 D0 = {
 	"appID": "fb ",
 	"payload": "dummyPayload",
@@ -25,12 +19,14 @@ D0 = {
 }
 
 Y0 = "THISIS_V0"
-A0 = "THISIS_A0"
 Z0 = "THISIS_Z0"
 V0 = "THISIS_V0"
+A0 = "THIS_IS_A0_THE_SECRET"
 
 FIRST_ENTRY = 0
 
 DIGEST_MODE = "SHA512Hash"
 DIGEST_SIZE = "64"
 
+FILE_A = BASE_PATH + "/utils/file_A"
+FILE_A_TEMP = BASE_PATH + "/utils/file_A_temp"

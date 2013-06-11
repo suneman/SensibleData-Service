@@ -3,7 +3,7 @@ import service_config
 import EXAMPLE_SECURE_service_config as SECURE_service_config
 import log_config
 from utils import log_config as CONFIG
-
+from loggerApp import helperModule
 
 class LogDatabase(object):
 
@@ -34,8 +34,8 @@ class LogDatabase(object):
                 returned = self.collection.insert({"flowID" : flowID, "D": D, "C" : C , "Y" : Y, "A" : A})
                 return str(returned)
 
-        def writeEntryWith_Z(self, flowID, D, V, Z, A):
-            returned = self.collection.insert({"flowID" : flowID, "D": D, "V" : V , "Z" : Z, "A" : A})
+        def writeEntryWith_Z(self, flowID, D, V, Z):
+            returned = self.collection.insert({"flowID" : flowID, "D": D, "V" : V , "Z" : Z})
             return str(returned)
 
 
@@ -93,14 +93,12 @@ class LogDatabase(object):
                 current_D = None
                 current_V = None
                 current_Z = None
-                current_A = None
-                previous_A = self.getPrevious_A(flowID)
 
-                for item in current: #refaictor
+                for item in current: #refactor
                         current_D = item["D"]
                         current_V = item["V"]
                         current_Z = item["Z"]
-                return {"current_D" : current_D, "current_V" : current_V,  "current_Z" : current_Z, "previous_A" : previous_A}
+                return {"current_D" : current_D, "current_V" : current_V,  "current_Z" : current_Z}
 
         def getPublicSeed(self):
                 return CONFIG.Y0
@@ -121,13 +119,3 @@ class LogDatabase(object):
             toReturn = lastEntry.get("Z")
             return toReturn
 
-        def getPrevious_A(self, current_flowID):
-            previous_A = None
-            print "current_flowID = " + str(current_flowID)
-            previousEntry = self.getPrevious(current_flowID)
-            previous_A = previousEntry.get("A")
-            print "previous_A = " + previous_A
-            return previous_A
-
-        def getA0(self):
-            return CONFIG.A0
