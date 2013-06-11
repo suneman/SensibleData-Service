@@ -34,6 +34,10 @@ class LogDatabase(object):
                 returned = self.collection.insert({"flowID" : flowID, "D": D, "C" : C , "Y" : Y, "A" : A})
                 return str(returned)
 
+        def writeEntryWith_Z(self, flowID, D, V, Z, A):
+            returned = self.collection.insert({"flowID" : flowID, "D": D, "V" : V , "Z" : Z, "A" : A})
+            return str(returned)
+
 
         def getMaxFlowID(self):
 		maxFlowID = 0
@@ -88,15 +92,21 @@ class LogDatabase(object):
                 current = self.collection.find({"flowID" : flowID}).limit(1) #refactor
                 current_D = None
                 current_V = None
-                current_Y = None
-                for item in current: #refatcor
+                current_Z = None
+                current_A = None
+                previous_A = self.getPrevious_A(flowID)
+
+                for item in current: #refaictor
                         current_D = item["D"]
-                        current_V = item["C"]
-                        current_Y = item["Y"]
-                return {"current_D" : current_D, "current_V" : current_V,  "current_Y": current_Y}
+                        current_V = item["V"]
+                        current_Z = item["Z"]
+                return {"current_D" : current_D, "current_V" : current_V,  "current_Z" : current_Z, "previous_A" : previous_A}
 
         def getPublicSeed(self):
                 return CONFIG.Y0
+
+        def getZ0(self):
+            return CONFIG.Z0
 
 # TODO: if there are NO entries, it crashes.
         def getLastY(self):
@@ -105,4 +115,19 @@ class LogDatabase(object):
                 toReturn = lastEntry.get("Y")
 		return toReturn
 
-	
+        def getLast_Z(self):
+            maxFlowID = self.getMaxFlowID()
+            lastEntry = self.getEntry(maxFlowID)
+            toReturn = lastEntry.get("Z")
+            return toReturn
+
+        def getPrevious_A(self, current_flowID):
+            previous_A = None
+            print "current_flowID = " + str(current_flowID)
+            previousEntry = self.getPrevious(current_flowID)
+            previous_A = previousEntry.get("A")
+            print "previous_A = " + previous_A
+            return previous_A
+
+        def getA0(self):
+            return CONFIG.A0

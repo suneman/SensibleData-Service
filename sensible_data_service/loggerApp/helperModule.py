@@ -1,4 +1,5 @@
 from Crypto.Hash import SHA512
+from Crypto.Hash import HMAC
 
 def convert(input):
 	if isinstance(input, dict):
@@ -30,15 +31,15 @@ def computeChecksum(inputData):
 	return checksum
 
 
-def create_Y(previous_Y, current_V):
-	if (previous_Y is None or current_V is None):
-		print "Error: previous_Y or current_V = None. Exit"
-		exit(-1)
-	h = SHA512.new()
-	h.update(previous_Y)
-	h.update(current_V) #only the checksum
-	Y = h.hexdigest()
-	return Y	
+#def create_Y(previous_Y, current_V):
+#	if (previous_Y is None or current_V is None):
+#		print "Error: previous_Y or current_V = None. Exit"
+#		exit(-1)
+#	h = SHA512.new()
+#	h.update(previous_Y)
+#	h.update(current_V)
+#	Y = h.hexdigest()
+#	return Y	
 
 
 def create_V(D):
@@ -58,3 +59,8 @@ def create_D(data):
 def update_A(old_A):
     return computeChecksum(old_A)
 
+def create_Z(current_V, previous_Z, current_A):
+    hmac = HMAC.new(str(current_A))
+    hmac.update(current_V)
+    hmac.update(previous_Z)
+    return hmac.hexdigest()

@@ -14,5 +14,5 @@ def insert(request):
 
 def check(request):
 	checker = checkerModule.Checker()
-	audit = checker.check()
+        audit = checker.check_Z()
 	return HttpResponse("last check = " + str(audit))
