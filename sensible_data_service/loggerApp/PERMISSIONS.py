@@ -1,7 +1,7 @@
-# Methods:
+# Actions/Methods:
 DROP_DATABASE = "drop_method"
 DELETE_ENTRY = "delete_method"
-DATAFLOW = "append_dataflow"
+
 
 DATAFLOW = {
         "id" : "append_dataflow",

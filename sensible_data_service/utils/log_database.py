@@ -30,8 +30,9 @@ class LogDatabase(object):
                 returned = self.collection.insert({"flowID" : flowID, "D": D, "C" : C , "Y" : Y})
                 return str(returned)
 
-        def writeEntryWithMAC(self, flowID, D, C, Y, Z, A):
-                self.collection.insert({"flowID" : flowID, "D": D, "C" : C , "Y" : Y, "Z" : Z, "A" : A})
+        def writeEntryWithMAC(self, flowID, D, C, Y, A):
+                returned = self.collection.insert({"flowID" : flowID, "D": D, "C" : C , "Y" : Y, "A" : A})
+                return str(returned)
 
 
         def getMaxFlowID(self):
@@ -86,16 +87,16 @@ class LogDatabase(object):
                         exit(-1)
                 current = self.collection.find({"flowID" : flowID}).limit(1) #refactor
                 current_D = None
-                current_C = None
+                current_V = None
                 current_Y = None
                 for item in current: #refatcor
                         current_D = item["D"]
-                        current_C = item["C"]
+                        current_V = item["C"]
                         current_Y = item["Y"]
-                return {"current_D" : current_D, "current_C" : current_C,  "current_Y": current_Y}
+                return {"current_D" : current_D, "current_V" : current_V,  "current_Y": current_Y}
 
         def getPublicSeed(self):
-                return CONFIG.SEED
+                return CONFIG.Y0
 
 # TODO: if there are NO entries, it crashes.
         def getLastY(self):

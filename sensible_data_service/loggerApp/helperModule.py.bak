@@ -30,23 +30,25 @@ def computeChecksum(inputData):
 	return checksum
 
 
-def create_Y(previous_Y, current_V):
-	if (previous_Y is None or current_V is None):
-		print "Error: previous_Y or current_V = None. Exit"
+def create_Y(previous_Y, current_C):
+	if (previous_Y is None or current_C is None):
+		print "Error: previous_Y or current_C = None. Exit"
 		exit(-1)
 	h = SHA512.new()
 	h.update(previous_Y)
-	h.update(current_V) #only the checksum
+	h.update(current_C) #only the checksum
 	Y = h.hexdigest()
 	return Y	
 
 
-def create_V(D):
+
+def create_C(D):
 	outputList = []
 	extract(D,outputList)
 	resultList = convert(outputList)
 	resultList.sort() # sort the values, done so when later it will be checked, the hashes will be the same
-        return ''.join(resultList) # from list to string
+	temp_C = computeChecksum(resultList) # saves the checksum of the values only
+	return temp_C
 
 
 def create_D(data):
@@ -54,7 +56,4 @@ def create_D(data):
 	appID = data['appID']
 	payload = data['payload']
 	return {"userID" : userID, "appID" : appID, "payload" : payload}
-
-def update_A(old_A):
-    return computeChecksum(old_A)
 

@@ -10,17 +10,18 @@ class Checker(object):
 		self.log = log_database.LogDatabase()
 
 
-	def dataIntegrityCheck(self,current_D, current_C):
+	def dataIntegrityCheck(self,current_D, current_V):
 		status = False # false=KO, True=OK
-		temp_C = helperModule.create_C(current_D)
-		if (temp_C == current_C):
+		temp_V = helperModule.create_V(current_D)
+		if (temp_V == current_V):
 			status = True
-		return {"status" : status, "temp_C" : temp_C}
+		return {"status" : status, "temp_V" : temp_V}
 
 
-	def chainIntegrityCheck(self, previous_Y, current_C, current_Y):
+	def chainIntegrityCheck(self, previous_Y, current_V, current_Y):
+
 		status = False # false=KO, True=OK
-		temp_Y = helperModule.create_Y(previous_Y, current_C)
+		temp_Y = helperModule.create_Y(previous_Y, current_V)
 		if ( temp_Y == current_Y):
 			status = True
 		return {"status" : status, "temp_Y" : temp_Y}
@@ -32,12 +33,12 @@ class Checker(object):
 		audit = {}
 		while ( (Y_1 != Y_last) and (keepLooking==True) ):
 			dataForCheck = self.log.getDataForCheck(flowID)
-			integrityDict = self.dataIntegrityCheck(dataForCheck["current_D"], dataForCheck["current_C"])
+			integrityDict = self.dataIntegrityCheck(dataForCheck["current_D"], dataForCheck["current_V"])
 			
 			if ( not integrityDict["status"] ):
 				keepLooking = False
 	
-			chainDict = self.chainIntegrityCheck(Y_1, integrityDict["temp_C"], dataForCheck["current_Y"])
+			chainDict = self.chainIntegrityCheck(Y_1, integrityDict["temp_V"], dataForCheck["current_Y"])
 
 			if ( not chainDict["status"] ):
 				keepLooking = False

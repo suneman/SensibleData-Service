@@ -2,6 +2,7 @@ import pymongo
 from utils.log_database import LogDatabase
 import json
 from utils import log_config as CONFIG
+from Crypto.Hash import HMAC
 from Crypto.Hash import SHA512
 import helperModule
 import PERMISSIONS
@@ -18,31 +19,22 @@ class Logger(object):
 
 # In this case, Y is NOT the hash of the current D0 with the previous link, but a random seed.
 # D0 is useless, added to make a consistent entry in the log, not used for authentication.
+# Z0 is the HashMAC of SEED. This is the farest link that chan be checked in the chain. If HMAC_A0(SEED) == myValue, ok.
 	def cryptoSetup(self): # make an overloaded method used also by the normal creation, for the "D payload"
-#            self.logDatabase.writeEntry(CONFIG.FIRST_ENTRY, CONFIG.D0, helperModule.computeChecksum([CONFIG.D0]) , CONFIG.SEED) # Write the first [dummy] entry in the log + the authentication key [before being overridden]
+		h = HMAC.new(key=CONFIG.A0, msg=CONFIG.SEED,digestmod=SHA512) # Load the HMAC with the secret key A0, want to hash SEED, hash algo = SHA512
+		C = helperModule.computeChecksum([CONFIG.D0])
+		self.logDatabase.writeEntry(CONFIG.FIRST_ENTRY, CONFIG.D0, C, CONFIG.SEED) # Write the first [dummy] entry in the log + the authentication key [before being overridden]
 
-                self.logDatabase.writeEntryWithMAC(CONFIG.FIRST_ENTRY, CONFIG.D0, helperModule.computeChecksum([CONFIG.D0]) , CONFIG.Y0, CONFIG.A0)
 
 # log_entry = <flowID, D, C, Y>
 # D = <userID,appID,payload>
 	def append_dataflow(self, data):
 		current_flowID = self.logDatabase.getMaxFlowID() + 1		
 		current_D = helperModule.create_D(data)
-		current_V = helperModule.create_V(current_D)
+		current_C = helperModule.create_C(current_D)
 		previous_Y = self.logDatabase.getEntry(current_flowID - 1).get("Y")
-		current_Y = helperModule.create_Y(previous_Y, current_V)
-#		mongo_id_string = self.logDatabase.writeEntry(current_flowID, current_D, current_V, current_Y)	# Finally, writes the log entry
-
-
-                previous_A = self.logDatabase.getEntry(current_flowID - 1).get("A")
-
-
-
-                current_A = helperModule.update_A(previous_A)
-
-
-
-                mongo_id_string = self.logDatabase.writeEntryWithMAC(current_flowID, current_D, current_V, current_Y, current_A)
+		current_Y = helperModule.create_Y(previous_Y, current_C)
+		mongo_id_string = self.logDatabase.writeEntry(current_flowID, current_D, current_C, current_Y)	# Finally, writes the log entry
                 tuple_to_return = (current_flowID, mongo_id_string)
                 return tuple_to_return
 
