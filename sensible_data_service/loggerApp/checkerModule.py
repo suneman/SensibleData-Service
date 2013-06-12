@@ -19,49 +19,43 @@ class Checker(object):
 		return {"status" : status, "temp_V" : temp_V}
 
 
-        def chainIntegrityCheck_Z(self, previous_Z, current_V, current_Z):
+        def chainIntegrityCheck_Z(self, previous_Z, current_V, current_Z, flowID):
 		status = False # false=KO, True=OK
-
-                previous_A = helperModule.read_A()
-
-
-		temp_Z = helperModule.create_Z(current_V, previous_Z, previous_A)
-                print "previous_A = " + previous_A
-                print "previous_Z = " + previous_Z
+                previous_A = helperModule.calculateHash_A(flowID-1, CONFIG.A0.encode("utf-8").strip(' \t\n\r') ).encode("utf-8").strip(' \t\n\r') 
+                temp_Z = helperModule.create_Z(current_V, previous_Z, previous_A).encode("utf-8")
                 print "current_Z = " + current_Z
-                print "temp_Z = " + temp_Z
 		if ( temp_Z == current_Z):
 			status = True
 		return {"status" : status, "temp_Z" : temp_Z}
 
 
 	def startCheck_Z(self, previous_Z, Z_last, flowID, A):
-		keepLooking = True
-		verifiedFlowID = 0
-		audit = {}
-		while ( (previous_Z != Z_last) and (keepLooking==True) ):
-			dataForCheck = self.log.getDataForCheck(flowID)
-                        print "dataForCheck = " 
-                        print dataForCheck
-			integrityDict = self.dataIntegrityCheck(dataForCheck["current_D"], dataForCheck["current_V"])
-			if ( not integrityDict["status"] ):
-				keepLooking = False
-                        print
-                        print "flowID = " + str(flowID)
-			chainDict = self.chainIntegrityCheck_Z(previous_Z, dataForCheck["current_V"], dataForCheck["current_Z"])
-			if ( not chainDict["status"] ):
-				keepLooking = False
-			
-			audit = {flowID : [integrityDict["status"], chainDict["status"]]}
-
-			previous_Z = chainDict["temp_Z"]
-			flowID = flowID + 1
-
-		return audit
+            keepLooking = True
+            audit = {}
+#            while ( (previous_Z != Z_last) and (keepLooking==True) ):
+            while ( (flowID <= self.log.getMaxFlowID()) and (keepLooking==True) ):
+                    dataForCheck = self.getDataForCheck(flowID)
+                    integrityDict = self.dataIntegrityCheck(dataForCheck["current_D"], dataForCheck["current_V"])
+                    if ( not integrityDict["status"] ):
+                            keepLooking = False
+                    chainDict = self.chainIntegrityCheck_Z(previous_Z, dataForCheck["current_V"], dataForCheck["current_Z"], flowID)
+                    if ( not chainDict["status"] ):
+                            keepLooking = False
+                    audit = {flowID : [integrityDict["status"], chainDict["status"]]}
+                    previous_Z = chainDict["temp_Z"]
+                    flowID = flowID + 1
+            return audit
 
         def check_Z(self):
-            Z_seed = self.log.getZ0()
-            Z_last = self.log.getLast_Z()
+            Z_seed = self.log.getZ0().encode("utf-8")
+            Z_last = self.log.getLast_Z().encode("utf-8")
             flowID = self.flowd_id_to_end
-            return self.startCheck_Z(Z_seed, Z_last, flowID, CONFIG.A0)
+            return self.startCheck_Z(Z_seed, Z_last, flowID, CONFIG.A0.strip(' \t\n\r') )
 
+
+        def getDataForCheck(self, flowID):
+            if (flowID < 1):
+                    print "flowID = " + str(flowID) + " can not be checked"
+                    exit(-1)
+            current = self.log.getEntry(flowID) #refactor
+            return {"current_D" : current.get("D"), "current_V" : current.get("V"),  "current_Z" : current.get("Z")}

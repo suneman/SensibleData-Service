@@ -47,36 +47,47 @@ def create_D(data):
 	return {"userID" : userID, "appID" : appID, "payload" : payload}
 
 def create_Z(current_V, previous_Z, previous_A):
+    print "CREATE_Z"
+    print "previous_A = " + previous_A
+    print "previous_Z = " + previous_Z
+
+    previous_A = previous_A.encode("utf-8").strip(' \t\n\r') #
+
     hmac = HMAC.new(previous_A)
     hmac.update(current_V)
     hmac.update(previous_Z)
-    return hmac.hexdigest()
+
+    toReturn = hmac.hexdigest().encode("utf-8").strip(' \t\n\r') #
+    
+    print "temp_Z = " + toReturn
+
+
+    return toReturn
 
 def read_A():
     fr = open(CONFIG.FILE_A, 'r')
-    A = fr.read()
+    A = fr.read().strip(' \t\n\r') # ARGH!
     fr.close()
-    return A
+    return A.encode("utf-8")
 
 def update_A():
-    A = read_A()
-    print "before = " + A
-#    calculated_A = calculateHash_A(1,A) # 1 round only
-    calculated_A = A
-
+    A = read_A().encode("utf-8")
+    calculated_A = calculateHash_A(1,A).encode("utf-8") # 1 iteration only
     fw = open(CONFIG.FILE_A_TEMP, 'w')
-
     fw.write(calculated_A)
     fw.close()
     os.rename(CONFIG.FILE_A_TEMP, CONFIG.FILE_A)
-    print "after = " + calculated_A
     return calculated_A
 
 def calculateHash_A(rounds, A):
-    print "rounds = " + str(rounds)
-    print "A = " + A
-    h = SHA512.new() # here or inside the loop?
-    h.update(A)
-    new_A = h.hexdigest()
-    print "updated_A = " + new_A
-    return new_A
+    print "CALCULATE HASH A"
+    A = A.encode("utf-8").strip(' \t\n\r') 
+
+    for i in range(0,rounds):
+        print "i = " + str(i)
+        h = SHA512.new() # Inside the loop
+        h.update(A)
+        A = h.hexdigest()
+#        new_A = new_A.encode("utf-8").strip(' \t\n\r')
+
+    return A.strip(' \t\n\r') 

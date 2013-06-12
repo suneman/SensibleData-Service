@@ -85,20 +85,20 @@ class LogDatabase(object):
         def getAllFlowIDs(self, userID):
                 return self.collection.find({"D.userID" : userID}, {"flowID" : 1, "_id" : 0}, sort=[("flowID", pymongo.DESCENDING)])
 
-        def getDataForCheck(self, flowID):
-                if (flowID < 1):
-                        print "flowID = " + str(flowID) + " can not be checked"
-                        exit(-1)
-                current = self.collection.find({"flowID" : flowID}).limit(1) #refactor
-                current_D = None
-                current_V = None
-                current_Z = None
-
-                for item in current: #refactor
-                        current_D = item["D"]
-                        current_V = item["V"]
-                        current_Z = item["Z"]
-                return {"current_D" : current_D, "current_V" : current_V,  "current_Z" : current_Z}
+#        def getDataForCheck(self, flowID):
+#                if (flowID < 1):
+#                        print "flowID = " + str(flowID) + " can not be checked"
+#                        exit(-1)
+#                current = self.collection.find({"flowID" : flowID}).limit(1) #refactor
+#                current_D = None
+#                current_V = None
+#                current_Z = None
+#
+#                for item in current: #refactor
+#                        current_D = item["D"]
+#                        current_V = item["V"]
+#                        current_Z = item["Z"]
+#                return {"current_D" : current_D, "current_V" : current_V,  "current_Z" : current_Z}
 
         def getPublicSeed(self):
                 return CONFIG.Y0
