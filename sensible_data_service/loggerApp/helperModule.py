@@ -44,24 +44,10 @@ def create_Z(current_V, previous_Z, previous_A):
     hmac.update(previous_Z)
     return hmac.hexdigest()
 
-def read_A():
-    fr = open(CONFIG.FILE_A, 'r')
-    A = fr.read().encode("utf-8").strip(' \t\n\r') # ARGH!
-    fr.close()
-    return A
-
-def update_A():
-    A = read_A()
-    calculated_A = calculateHash_A(1,A)
-    fw = open(CONFIG.FILE_A_TEMP, 'w')
-    fw.write(calculated_A)
-    fw.close()
-    os.rename(CONFIG.FILE_A_TEMP, CONFIG.FILE_A)
-    return calculated_A
 
 def calculateHash_A(rounds, A):
     for i in range(0,rounds):
-        h = SHA512.new() # Inside the loop
+        h = SHA512.new() # Inside the loop work. TODO: take out for performances
         h.update(A)
         A = h.hexdigest()
     return A

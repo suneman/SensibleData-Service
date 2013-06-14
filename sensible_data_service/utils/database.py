@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 import service_config
-import SECURE_service_config
+#import SECURE_service_config
 
 class Database:
 	client = None

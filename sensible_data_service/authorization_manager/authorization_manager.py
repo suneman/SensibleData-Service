@@ -1,6 +1,6 @@
 from utils.auth_database import AuthDatabase
 from utils import service_config
-from utils import SECURE_service_config
+#from utils import EXAMPLE_SECURE_service_config
 from application_manager import application_manager
 from django.http import HttpResponse
 from bson import json_util as json

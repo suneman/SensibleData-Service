@@ -6,7 +6,7 @@ import time
 import urllib2
 import urllib
 import json
-from utils import service_config, SECURE_service_config
+#from utils import service_config, EXAMPLE_SECURE_service_config
 from django.shortcuts import redirect
 
 def saveCode(code, user, scope):

@@ -1,6 +1,5 @@
 import pymongo
 import service_config
-import EXAMPLE_SECURE_service_config as SECURE_service_config
 import log_config
 from utils import log_config as CONFIG
 from loggerApp import helperModule
@@ -17,14 +16,11 @@ class LogDatabase(object):
 		self.collection = self.db[log_config.LOGGER_DATABASE['params']['collection']]
 
 
-
 	def insert(self, document):
-		doc_id = self.collection.insert(document)
-		return doc_id
+		return self.collection.insert(document)
 
 	def getDocuments(self, query, collection):
-		coll = self.db[collection]
-		return coll.find(query)
+		return self.db[collection].find(query)
 
         def writeEntry(self, flowID, D, C, Y):
                 returned = self.collection.insert({"flowID" : flowID, "D": D, "C" : C , "Y" : Y})
@@ -104,3 +100,5 @@ class LogDatabase(object):
             toReturn = lastEntry.get("Z")
             return toReturn
 
+        def reset(self):
+            self.collection.remove()

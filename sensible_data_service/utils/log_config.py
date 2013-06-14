@@ -11,6 +11,18 @@ LOGGER_DATABASE = {
 	}
 }
 
+LOGGER_KEYS = {
+	"backend":"mongodb",
+	"params": {
+		"url":"mongodb://%s:%s@ds029338.mongolab.com:29338/sensible-logger",
+		"database":"sensible-logger",
+		"collection":"logger-keys",
+		"username":"logger",
+		"password":"logger"
+	}
+}
+
+
 
 D0 = {
 	"appID": "fb ",

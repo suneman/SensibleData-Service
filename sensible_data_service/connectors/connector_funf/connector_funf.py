@@ -9,7 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.servers.basehttp import FileWrapper
 import mimetypes
 from utils import service_config
-from utils import SECURE_service_config
+#from utils import SECURE_service_config
 from utils import log
 
 from connector_pipes.connector_pipe_funf import connector_pipe_funf
