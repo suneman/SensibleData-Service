@@ -1,0 +1,39 @@
+from loggerApp import loggerModule
+from loggerApp import checkerModule
+from loggerApp import helperModule
+from django.http import HttpResponse
+from loggerApp import PERMISSIONS
+from loggerApp.signals import write_to_log
+from utils import log_config as CONFIG
+from django.contrib.auth.models import User
+
+# TODO: all these calls with request must be changed with request+parameters. The corresponding signatures as well.
+
+# Make a class called Auditing that has Logger and Checker as sons. Should be a singleton. One instance of auditing
+# But what if it crashes? At init, load all the collections in memory. Too much?i
+# Keep connection open or spawn multiple connection every time data come to mongodb?
+
+def createNewUser(request):
+    logger = loggerModule.Logger()
+    newUser = request.GET.get("newuser")
+    newBaseKey = request.GET.get("key")
+    logger.createNewUser(request, newUser, newBaseKey) # Call this
+    return HttpResponse("Dragons...")
+
+
+def append(request):
+    logger = loggerModule.Logger()
+    fakeJson = {"appID": "FUNF", "payload": "FUNF_dummyPayload"} # TODO: get this from caller
+    user = request.GET.get("user")
+    returned_tuple = logger.append(request, fakeJson, user) # Starts the call
+    return HttpResponse("inserted entry, flowID = " + str(returned_tuple[0]) + ", mongo_id = " + returned_tuple[1])
+
+
+def check(request):
+    checker = checkerModule.Checker()
+    key = request.META["QUERY_STRING"] 
+    audit = checker.check(request, key)
+    return HttpResponse("last check = " + str(audit))
+
+
+# TODO: def deleteUser(request):

@@ -29,10 +29,11 @@ DATABASES = {
 
 LOGIN_URL = '/openid/login/'
 LOGIN_REDIRECT_URL = '/'
-OPENID_SSO_SERVER_URL = 'http://166.78.249.214:8081/openid/xrds/'
+#OPENID_SSO_SERVER_URL = 'http://166.78.249.214:8081/openid/xrds/'
+OPENID_SSO_SERVER_URL = 'http://166.78.249.214:8080/openid/xrds/'
 OPENID_USE_EMAIL_FOR_USERNAME = False
 AUTHENTICATION_BACKENDS = (
-            'django_openid_auth.auth.OpenIDBackend',
+#            'django_openid_auth.auth.OpenIDBackend',
             'django.contrib.auth.backends.ModelBackend',
         )
 
@@ -149,10 +150,8 @@ INSTALLED_APPS = (
     'connectors.connector_funf',
     'anonymizer',
     'django.contrib.admin',
-#    'django_openid_auth'
+#    'django_openid_auth',
     'loggerApp',
-    # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )

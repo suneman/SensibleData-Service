@@ -2,6 +2,15 @@ from Crypto.Hash import SHA512
 from Crypto.Hash import HMAC
 import os
 from utils import log_config as CONFIG
+from Crypto import Random
+from Crypto.PublicKey import RSA
+
+import string
+import random
+import time
+import datetime
+
+from django.contrib.auth.models import User
 
 def convert(input):
     if isinstance(input, dict):
@@ -32,11 +41,10 @@ def create_V(D):
     return ''.join(resultList) # from list to string
 
 
-def create_D(data):
-    userID = data['userID']
+def create_D(username, data):
     appID = data['appID']
     payload = data['payload']
-    return {"userID" : userID, "appID" : appID, "payload" : payload}
+    return {"userID" : username, "appID" : appID, "payload" : payload}
 
 def create_Z(current_V, previous_Z, previous_A):
     hmac = HMAC.new(previous_A)
@@ -45,9 +53,37 @@ def create_Z(current_V, previous_Z, previous_A):
     return hmac.hexdigest()
 
 
-def calculateHash_A(rounds, A):
+def calculateHash_A(rounds, A): # TODO: This should be changed from SHA512 [fast] to bcrypt [slow] which is good for storing passwords
     for i in range(0,rounds):
-        h = SHA512.new() # Inside the loop work. TODO: take out for performances
+        h = SHA512.new()
         h.update(A)
         A = h.hexdigest()
-    return A
+    return str(A)
+
+
+def getTimestamp():
+    return datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S') # Format : "2013-06-08 12:01:15" TODO: make it fine-grained. ms?
+
+
+def permissionCheck(_request, _permission):
+    if _request.user.is_authenticated():
+        auth = True
+    else:
+        print "User NOT authenticated"
+        auth = False
+
+    if _request.user.has_perm(_permission):
+        perm = True
+    else:
+        print "he has NO permissions"
+        perm = False
+    return (auth and perm) 
+
+
+def isSuperUser(_request):
+    superUser = _request.user.is_superuser # Only superusers can create this stuff. TODO: Tomorrow, add role "studyAdmin" and give him the permissioon for this task
+    if not superUser:
+        print "Not a superuser"
+        return False
+    return superUser
+

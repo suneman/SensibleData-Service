@@ -4,101 +4,61 @@ import log_config
 from utils import log_config as CONFIG
 from loggerApp import helperModule
 
+
+# SQL <==> NoSQL
+# Table <==> Collection
+# Column <==> Field
+# Entry <==> Document
+
+
+# Log entry = <flowID, D, V, Z> TODO: use the models as proxies!
+
 class LogDatabase(object):
 
 	client = None
 	db = None
-	collection = None
+        collectionList = None
 
         def __init__(self):
-                self.client = pymongo.MongoClient(log_config.LOGGER_DATABASE['params']['url']%(log_config.LOGGER_DATABASE['params']['username'],log_config.LOGGER_DATABASE['params']['password']))
-		self.db = self.client[log_config.LOGGER_DATABASE['params']['database']]
-		self.collection = self.db[log_config.LOGGER_DATABASE['params']['collection']]
+            self.client = pymongo.MongoClient(log_config.LOGGER_DATABASE['params']['url']%(log_config.LOGGER_DATABASE['params']['username'],log_config.LOGGER_DATABASE['params']['password']))
+            self.db = self.client[log_config.LOGGER_DATABASE['params']['database']]
 
 
-	def insert(self, document):
-		return self.collection.insert(document)
+        def createCollection(self, _username):
+            collectionName = _username
+            self.writeEntry(collectionName, CONFIG.FIRST_ENTRY, CONFIG.D0, CONFIG.V0, CONFIG.Z0) # Seed entry for a given user
+            return None
 
-	def getDocuments(self, query, collection):
-		return self.db[collection].find(query)
 
-        def writeEntry(self, flowID, D, C, Y):
-                returned = self.collection.insert({"flowID" : flowID, "D": D, "C" : C , "Y" : Y})
-                return str(returned)
-
-        def writeEntryWithMAC(self, flowID, D, C, Y, A):
-                returned = self.collection.insert({"flowID" : flowID, "D": D, "C" : C , "Y" : Y, "A" : A})
-                return str(returned)
-
-        def writeEntryWith_Z(self, flowID, D, V, Z):
-            returned = self.collection.insert({"flowID" : flowID, "D": D, "V" : V , "Z" : Z})
+        def writeEntry(self, _collectionName, flowID, D, V, Z):
+            returned = self.db[_collectionName].insert({"flowID" : flowID, "D" : D, "V" : V, "Z" : Z})
             return str(returned)
 
 
-        def getMaxFlowID(self):
+        def getMaxFlowID(self, _collectionName):
             maxFlowID = 0
-            resultEntry = self.collection.find_one(sort=[("flowID", -1)])
+            resultEntry = self.db[_collectionName].find_one(sort=[("flowID", -1)])
             if (resultEntry is not None):
-                    maxFlowID = resultEntry['flowID']
-#		print "maxFLowID = " + str(maxFlowID)
+                maxFlowID = resultEntry['flowID']
             return maxFlowID
 
 
-# TODO:
-        def getMaxUserAppFlow(self, userID, appID):
-            return self.collection.find().sort("userAppFlow", pymongo.DESCENDING).count()
-
-        
-        def getPrevious(self, flowID):
+        def getPrevious(self, _collectionName, flowID):
             previous = flowID - 1
-            result = self.collection.find_one({"flowID" : previous})
-            return result
+            return self.db[_collectionName].find_one({"flowID" : previous})
 
-        def getEntry(self, flowID):
-#		print "flowID = " + str(flowID)
-            result = self.collection.find_one({"flowID" : flowID})
-            return result
 
-        def getAuthenticationKey(self, flowID):
-            result = self.collection.find({"flowID" : flowID})
-            # Some sanity checks and early returns
-            if (result is None or result.count() == 0):
-                    print "flowID = " + str(flowID) + " not found"
-                    return -1
-            elif (result.count() > 1):
-                    print "More than ONE authentication key A for flowID = " + str(flowID)
-                    return -2
-            elif (result.count() == 1):
-                    return self.collection.find_one({"flowID" : flowID}).get("A") # Retrieve the Authentication key used for that event
+        def getLast_Z(self, _collectionName):
+            maxFlowID = self.getMaxFlowID(_collectionName)
+            return self.getEntry(_collectionName, maxFlowID).get("Z")
 
-        def getLastEntry(self, userID):
-#               return self.collection.find({"D.userID" : userID}, sort=[("D.userAppFlow", pymongo.DESCENDING)]).limit(1)
-            return self.collection.find_one({"D.userID" : userID}, sort=[("D.userAppFlow", pymongo.DESCENDING)])
 
-        def count(self, userID):
-            return self.collection.find({"D.userID" : userID}).count()
+        def getEntry(self, _collectionName, flowID):
+            return self.db[_collectionName].find_one({"flowID" : flowID})
 
-        def getAllFlowIDs(self, userID):
-            return self.collection.find({"D.userID" : userID}, {"flowID" : 1, "_id" : 0}, sort=[("flowID", pymongo.DESCENDING)])
 
-        def getPublicSeed(self):
-            return CONFIG.Y0
-
+# TODO: create Z0 at createCollection moment, not static
         def getZ0(self):
             return CONFIG.Z0
 
-# TODO: if there are NO entries, it crashes.
-        def getLastY(self):
-            maxFlowID = self.getMaxFlowID()
-            lastEntry = self.getEntry(maxFlowID)
-            toReturn = lastEntry.get("Y")
-            return toReturn
 
-        def getLast_Z(self):
-            maxFlowID = self.getMaxFlowID()
-            lastEntry = self.getEntry(maxFlowID)
-            toReturn = lastEntry.get("Z")
-            return toReturn
-
-        def reset(self):
-            self.collection.remove()

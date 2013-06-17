@@ -28,4 +28,13 @@ class Keystore(object):
         self.keytable.update({ "username": _username }, { "$set": { "key": A } } )
         return True # TODO change with more useful
 
+# TODO: check if "count" has good performance
+    def existsUser(self, _username):
+        exists = False
+        if (self.keytable.find({ "username": _username}).count() != 0):
+            exists = True
+        return exists
 
+# TODO: add a check to see if has been deleted or not.
+    def deleteUser(self, _username):
+        return self.keytable.remove({"username" : _username})

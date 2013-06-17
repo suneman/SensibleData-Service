@@ -1,0 +1,70 @@
+import helperModule
+from utils import log_database
+from utils import log_config as CONFIG
+from django.contrib.auth.decorators import permission_required
+
+class Checker(object):
+
+    log = None
+    flowID_to_end = 1 
+
+    def __init__(self):
+        self.log = log_database.LogDatabase()
+
+
+# I can not use @permission_required('loggerApp.auditTrail_verify') because this is not a view [?]
+    def check(self, _request, _key):
+        if not helperModule.permissionCheck(_request, "loggerApp.auditTrail_verify"):
+            return False
+        return self.startCheck_Z(self.log.getZ0(), self.log.getLast_Z(), self.flowID_to_end, _key)
+
+
+    def checkGroup(self, _request, _group_name):
+        groups_ValuesListQuerySet = _request.user.groups.values_list('name',flat=True)
+        groups_list = list(groups_ValuesListQuerySet)
+        in_group = False
+        if _group_name in groups_list:
+            in_group = True
+        return in_group
+
+
+    def dataIntegrityCheck(self,current_D, current_V):
+        status = False # false=KO, True=OK
+        temp_V = helperModule.create_V(current_D)
+        if (temp_V == current_V):
+                status = True
+        return {"status" : status, "temp_V" : temp_V}
+
+
+    def chainIntegrityCheck_Z(self, previous_Z, current_V, current_Z, A, flowID):
+        status = False # false=KO, True=OK
+        previous_A = helperModule.calculateHash_A(flowID-1, A)
+        temp_Z = helperModule.create_Z(current_V, previous_Z, previous_A)
+        if ( temp_Z == current_Z):
+                status = True
+        return {"status" : status, "temp_Z" : temp_Z}
+
+
+    def startCheck_Z(self, previous_Z, Z_last, flowID, A):
+        keepLooking = True
+        audit = {}
+        while ( (flowID <= self.log.getMaxFlowID()) and (keepLooking==True) ):
+            dataForCheck = self.getDataForCheck(flowID)
+            integrityDict = self.dataIntegrityCheck(dataForCheck["current_D"], dataForCheck["current_V"])
+            if ( not integrityDict["status"] ):
+                keepLooking = False
+            chainDict = self.chainIntegrityCheck_Z(previous_Z, dataForCheck["current_V"], dataForCheck["current_Z"], A, flowID)
+            if ( not chainDict["status"] ):
+                keepLooking = False
+            audit = {flowID : [integrityDict["status"], chainDict["status"]]}
+            previous_Z = chainDict["temp_Z"]
+            flowID = flowID + 1
+        return audit
+
+
+    def getDataForCheck(self, flowID):
+        if (flowID < 1):
+            print "flowID = " + str(flowID) + " can not be checked"
+            exit(-1)
+        current = self.log.getEntry(flowID)
+        return {"current_D" : current.get("D"), "current_V" : current.get("V"),  "current_Z" : current.get("Z")}

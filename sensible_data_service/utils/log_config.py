@@ -5,7 +5,7 @@ LOGGER_DATABASE = {
 	"params": {
 		"url":"mongodb://%s:%s@ds029338.mongolab.com:29338/sensible-logger",
 		"database":"sensible-logger",
-		"collection":"logger-collection",
+#		"collection":"logger-collection",
 		"username":"logger",
 		"password":"logger"
 	}
@@ -16,7 +16,7 @@ LOGGER_KEYS = {
 	"params": {
 		"url":"mongodb://%s:%s@ds029338.mongolab.com:29338/sensible-logger",
 		"database":"sensible-logger",
-		"collection":"logger-keys",
+		"collection":"key-table",
 		"username":"logger",
 		"password":"logger"
 	}
@@ -42,3 +42,5 @@ DIGEST_SIZE = "64"
 
 FILE_A = BASE_PATH + "/utils/file_A"
 FILE_A_TEMP = BASE_PATH + "/utils/file_A_temp"
+
+USER_TABLE_PREFIX = "user_"
